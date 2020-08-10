@@ -4,7 +4,10 @@ Rails.application.routes.draw do
 
   namespace 'api' do
     namespace 'v1' do
-      resources :sessions, only: [:create, :destroy]
+      resources :sessions, only: [:create]
+      delete "/sessions", to: "sessions#destroy"
+      resources :users, only: [:create]
+
       get "/current_user", to: "sessions#get_user"
       resources :posts do
         resources :comments

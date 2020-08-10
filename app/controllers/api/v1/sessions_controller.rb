@@ -4,11 +4,10 @@ class Api::V1::SessionsController < ApplicationController
     def create
         user = User.find_by(email: params[:email])
         if user.valid_password?(params[:password])
-            exp = (Time.now+ 2.minutes).to_i
-            refresh_exp = (Time.now+ 5.minutes).to_i
-            access_token = encode_token({user_email: user.email , exp: exp})
-            refresh_token = encode_token({user_email: user.email , exp: refresh_exp})
-
+            access_token = create_token(user.email , 2)
+            refresh_token = create_token(user.email , 5)
+            save_in_cache(user.email,access_token,refresh_token)
+            #render json: user.auth_token
             render "create.json" , locals: {user: user , access_token: access_token , refresh_token: refresh_token} ,status: :created
         else
             head(:unauthorized)
@@ -16,6 +15,10 @@ class Api::V1::SessionsController < ApplicationController
     end
 
     def destroy
+        #cache = ActiveSupport::Cache::MemoryStore.new
+        Rails.cache.delete(@user.email)
+        render json: "logout out"
+        #render json: Rails.cache.read().split(@user.email)[0]
     end
 
     def get_user
