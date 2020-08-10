@@ -17,8 +17,7 @@ class Api::V1::SessionsController < ApplicationController
     def destroy
         #cache = ActiveSupport::Cache::MemoryStore.new
         Rails.cache.delete(@user.email)
-        render json: "logout out"
-        #render json: Rails.cache.read().split(@user.email)[0]
+        render json: "logged out", status: :ok
     end
 
     def get_user
