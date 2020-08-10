@@ -1,5 +1,8 @@
 class Api::V1::CommentsController < ApplicationController
     before_action :set_comment, only: [:show , :update , :destroy]
+    before_action :authorized, except: [:index , :show, :create]
+    before_action :logged_in_user
+
     def index 
         @comments = Comment.where(post_id: params[:post_id])
         render "index.json"

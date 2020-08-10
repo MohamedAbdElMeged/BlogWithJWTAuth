@@ -1,14 +1,17 @@
 class Api::V1::PostsController < ApplicationController
     before_action :set_post, only: [:show, :update, :destroy]
-    before_action :authorized, except: [:index , :show]
+    before_action :authorized, except: [ :index ,:show]
+    before_action :logged_in_user
+
     def index
-        @posts = Post.all
+        @posts = Post.all.order(created_at: :desc)
         render "index.json"
     end
 
     def create
         @post = Post.new(post_params)
-        if @post.save
+        @post.user = @user
+        if @post.save!
             render "show.json", status: :created
         else
             render json: "error" , status: :unprocessable_entity
