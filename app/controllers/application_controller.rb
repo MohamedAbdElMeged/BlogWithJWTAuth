@@ -39,7 +39,7 @@ class ApplicationController < ActionController::API
       if decoded_token 
         user_email = decoded_token[0]['user_email'].to_s
         #user_email = user_email.slice "EmailTokenJwT$^%#$151613EmailTokenJwT$"
-        @user = User.find_by(email: user_email)
+          @user = User.find_by(email: user_email)      
       end
     end
   
@@ -48,7 +48,7 @@ class ApplicationController < ActionController::API
     end
   
     def authorized
-      render json: { message: 'Please log in' }, status: :unauthorized unless logged_in? && Rails.cache.read(@user.email) != nil 
+      render json: { message: 'Please log in' }, status: :unauthorized unless  logged_in? && Rails.cache.read(@user.email) != nil
     end
-  
+
 end
