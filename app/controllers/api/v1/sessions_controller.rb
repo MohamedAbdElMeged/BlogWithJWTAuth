@@ -4,7 +4,7 @@ class Api::V1::SessionsController < ApplicationController
     def create
         user = User.find_by(email: params[:email])
         if user.valid_password?(params[:password])
-            access_token = create_token(user.email , 20)
+            access_token = create_token(user.email , 1)
             refresh_token = create_token(user.email , 20)
             #access_token = encode_token({user_id: user.id})
             save_in_cache(user.email,access_token,refresh_token)
@@ -28,6 +28,10 @@ class Api::V1::SessionsController < ApplicationController
     end
 
     def get_user
-        render "user.json", status: :ok
+        if @user
+            render "user.json", status: :ok
+        else
+            head(:unauthorized)
+        end
     end
 end

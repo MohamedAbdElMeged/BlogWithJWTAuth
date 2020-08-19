@@ -8,6 +8,6 @@ class User < ApplicationRecord
   has_many :comments, dependent: :destroy
 
   attr_accessor :auth_token
-
+  mount_uploader :photo, ImageUploader
 
 end

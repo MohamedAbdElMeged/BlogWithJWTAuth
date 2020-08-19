@@ -18,7 +18,7 @@ gem 'puma', '~> 4.1'
 gem 'rack-cors'
 # Use Active Storage variant
 # gem 'image_processing', '~> 1.2'
-
+gem 'carrierwave'
 gem "devise"
 gem "jwt"
 # Reduces boot times through caching; required in config/boot.rb

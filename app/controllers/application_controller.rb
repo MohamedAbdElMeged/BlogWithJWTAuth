@@ -15,6 +15,12 @@ class ApplicationController < ActionController::API
       return encode_token({user_email: email , exp: exp})
     end
 
+    def get_token
+      if auth_header 
+        return auth_header.split(' ')[1]
+      end
+    end
+
     def decoded_token
       if auth_header
         token = auth_header.split(' ')[1]
@@ -35,6 +41,19 @@ class ApplicationController < ActionController::API
       end
     end
 
+    def check_token_in_cache(token, email)
+      cache_object = Rails.cache.read(@user.email)
+      access_token_from_cache = cache_object.split(email)[0]
+      refresh_token_from_cache = cache_object.split(email)[1]
+      if access_token_from_cache == token
+        return true
+      elsif refresh_token_from_cache == token
+        return true
+      else  
+        return false
+      end
+    end
+
     def logged_in_user
       if decoded_token 
         user_email = decoded_token[0]['user_email'].to_s
@@ -42,13 +61,21 @@ class ApplicationController < ActionController::API
           @user = User.find_by(email: user_email)      
       end
     end
+
+    # def renew_access_token(refresh_token)
+    #   cache_object = Rails.cache.read(@user.email)
+    #   refresh_token_from_cache = cache_object.split(email)[1]
+    #   if refresh_token == refresh_token_from_cache
+
+    #   end
+    # end
   
     def logged_in?
       !!logged_in_user  
     end
   
     def authorized
-      render json: { message: 'Please log in' }, status: :unauthorized unless  logged_in? && Rails.cache.read(@user.email) != nil
+      render json: { message: 'Please log in' }, status: :unauthorized unless  logged_in? && check_token_in_cache(get_token , @user.email)
     end
 
 end
