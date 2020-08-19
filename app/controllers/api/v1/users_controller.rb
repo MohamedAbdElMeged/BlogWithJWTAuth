@@ -3,8 +3,8 @@ class Api::V1::UsersController < ApplicationController
     def create
         @user = User.new(user_params)
         if @user.save!
-            access_token = create_token(@user.email,1)
-            refresh_token = create_token(@user.email,5)
+            access_token = create_token(@user.email,10)
+            refresh_token = create_token(@user.email,10)
             save_in_cache(@user.email,access_token,refresh_token)
             render "create.json",locals: {user: @user ,access_token: access_token, refresh_token: refresh_token },status: :created
              
